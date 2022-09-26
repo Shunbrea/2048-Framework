@@ -1,8 +1,8 @@
 /**
- * Framework for 2048 & 2048-Like Games (C++ 11)
+ * Framework for Threes! and its variants (C++ 11)
  * statistics.h: Utility for making statistical reports
  *
- * Author: Hung Guei
+ * Author: Theory of Computer Games
  *         Computer Games and Intelligence (CGI) Lab, NYCU, Taiwan
  *         https://cgilab.nctu.edu.tw/
  */
@@ -36,22 +36,22 @@ public:
 	 * show the statistics of last 'block' games
 	 *
 	 * the format is
-	 * 1000   avg = 273901, max = 382324, ops = 241563 (170543|896715)
-	 *        512     100%   (0.3%)
-	 *        1024    99.7%  (0.2%)
-	 *        2048    99.5%  (1.1%)
-	 *        4096    98.4%  (4.7%)
-	 *        8192    93.7%  (22.4%)
-	 *        16384   71.3%  (71.3%)
+	 * 1000    avg = 282, max = 2325, ops = 1346086 (2840867|955796)
+	 *         6       100%    (0.9%)
+	 *         12      99.1%   (15%)
+	 *         24      84.1%   (45.3%)
+	 *         48      38.8%   (34.9%)
+	 *         96      3.9%    (3.8%)
+	 *         192     0.1%    (0.1%)
 	 *
 	 * where
-	 *  '1000': current index
-	 *  'avg = 273901, max = 382324': the average score is 273901, the maximum score is 382324
-	 *  'ops = 241563 (170543|896715)': the average speed is 241563
-	 *                                  the average speed of the slider is 170543
-	 *                                  the average speed of the placer is 896715
-	 *  '93.7%': 93.7% of the games reached 8192-tiles, i.e., win rate of 8192-tile
-	 *  '22.4%': 22.4% of the games terminated with 8192-tiles as the largest tile
+	 * '1000': current index
+	 * 'avg = 282, max = 2325': the average score is 282, the maximum score is 2325
+	 * 'ops = 1346086 (2840867|955796)': the average speed is 1346086
+	 *                                   the average speed of the slider is 2840867
+	 *                                   the average speed of the placer is 955796
+	 * '84.1%': 84.1% of the games reached 24-tiles, i.e., win rate of 24-tile
+	 * '45.3%': 45.3% of the games terminated with 24-tiles as the largest tile
 	 */
 	void show(bool tstat = true, size_t blk = 0) const {
 		size_t num = std::min(data.size(), blk ?: block);
@@ -89,7 +89,7 @@ public:
 		for (size_t t = 0, c = 0; c < num; c += stat[t++]) {
 			if (stat[t] == 0) continue;
 			size_t accu = std::accumulate(std::begin(stat) + t, std::end(stat), size_t(0));
-			std::cout << "\t" << ((1 << t) & -2u); // type
+			std::cout << "\t" << board::itot(t); // type
 			std::cout << "\t" << (accu * 100.0 / num) << "%"; // win rate
 			std::cout << "\t" "(" << (stat[t] * 100.0 / num) << "%" ")"; // percentage of ending
 			std::cout << std::endl;

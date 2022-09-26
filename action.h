@@ -1,8 +1,8 @@
 /**
- * Framework for 2048 & 2048-Like Games (C++ 11)
+ * Framework for Threes! and its variants (C++ 11)
  * action.h: Define the behavior of actions for both players and environments
  *
- * Author: Hung Guei
+ * Author: Theory of Computer Games
  *         Computer Games and Intelligence (CGI) Lab, NYCU, Taiwan
  *         https://cgilab.nctu.edu.tw/
  */
@@ -93,29 +93,29 @@ protected:
 class action::place : public action {
 public:
 	static constexpr unsigned type = type_flag('p');
-	place(unsigned pos, unsigned tile) : action(place::type | (pos & 0x0f) | (std::min(tile, 35u) << 4)) {}
+	place(unsigned pos, unsigned tile, unsigned hint) : action(place::type | (pos & 0x0f) | ((tile & 0x0f) << 4) | ((hint & 0x0f) << 8)) {}
 	place(const action& a = {}) : action(a) {}
 	unsigned position() const { return event() & 0x0f; }
-	unsigned tile() const { return event() >> 4; }
+	unsigned tile() const { return (event() >> 4) & 0x0f; }
+	unsigned hint() const { return (event() >> 8) & 0x0f; }
 public:
 	board::reward apply(board& b) const {
-		return b.place(position(), tile());
+		return b.place(position(), tile(), hint());
 	}
 	std::ostream& operator >>(std::ostream& out) const {
 		const char* idx = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ?";
-		return out << idx[position()] << idx[std::min(tile(), 36u)];
+		return out << idx[position()] << idx[std::min(tile(), 36u)] << idx[std::min(hint(), 36u)];
 	}
 	std::istream& operator <<(std::istream& in) {
 		const char* idx = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		if (in.peek() != '#' && in) {
-			char v = in.peek();
-			unsigned pos = std::find(idx, idx + 16, v) - idx;
-			in.ignore(1) >> v;
-			unsigned tile = std::find(idx, idx + 36, v) - idx;
-			if (pos < 16 && tile < 36) {
-				operator =(action::place(pos, tile));
-				return in;
-			}
+			char p, t, h;
+			in >> p >> t >> h;
+			unsigned pos = std::find(idx, idx + 16, p) - idx;
+			unsigned tile = std::find(idx, idx + 36, t) - idx;
+			unsigned hint = std::find(idx, idx + 36, h) - idx;
+			operator =(action::place(pos, tile, hint));
+			return in;
 		}
 		in.setstate(std::ios::failbit);
 		return in;

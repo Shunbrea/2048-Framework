@@ -1,8 +1,8 @@
 /**
- * Framework for 2048 & 2048-Like Games (C++ 11)
- * 2048.cpp: Main file for the 2048 framework
+ * Framework for Threes! and its variants (C++ 11)
+ * threes.cpp: Main file for Threes!
  *
- * Author: Hung Guei
+ * Author: Theory of Computer Games
  *         Computer Games and Intelligence (CGI) Lab, NYCU, Taiwan
  *         https://cgilab.nctu.edu.tw/
  */
@@ -18,7 +18,7 @@
 #include "statistics.h"
 
 int main(int argc, const char* argv[]) {
-	std::cout << "2048 Demo: ";
+	std::cout << "Threes! Demo: ";
 	std::copy(argv, argv + argc, std::ostream_iterator<const char*>(std::cout, " "));
 	std::cout << std::endl << std::endl;
 

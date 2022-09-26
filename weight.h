@@ -1,8 +1,8 @@
 /**
- * Framework for 2048 & 2048-Like Games (C++ 11)
+ * Framework for Threes! and its variants (C++ 11)
  * weight.h: Lookup table template for n-tuple network
  *
- * Author: Hung Guei
+ * Author: Theory of Computer Games
  *         Computer Games and Intelligence (CGI) Lab, NYCU, Taiwan
  *         https://cgilab.nctu.edu.tw/
  */

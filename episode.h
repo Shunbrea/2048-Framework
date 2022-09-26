@@ -1,8 +1,8 @@
 /**
- * Framework for 2048 & 2048-Like Games (C++ 11)
+ * Framework for Threes! and its variants (C++ 11)
  * episode.h: Data structure for storing an episode
  *
- * Author: Hung Guei
+ * Author: Theory of Computer Games
  *         Computer Games and Intelligence (CGI) Lab, NYCU, Taiwan
  *         https://cgilab.nctu.edu.tw/
  */
@@ -43,28 +43,29 @@ public:
 	}
 	agent& take_turns(agent& slide, agent& place) {
 		ep_time = millisec();
-		return step() < 2 || step() % 2 ? place : slide;
+		return step() >= 9 && (step() - 8) % 2 ? slide : place;
 	}
 	agent& last_turns(agent& slide, agent& place) {
-		return step() > 2 ? take_turns(place, slide) : place;
+		return step() >= 9 ? take_turns(place, slide) : place;
 	}
 
 public:
 	size_t step(unsigned who = -1u) const {
-		int size = ep_moves.size(); // 'int' is important for handling 0
+		size_t size = ep_moves.size();
 		switch (who) {
-		case action::slide::type: return (size - 1) / 2;
-		case action::place::type: return (size - (size - 1) / 2);
+		case action::slide::type: return size > 9 ? (size) / 2 - 4 : 0;
+		case action::place::type: return size > 9 ? (size - 1) / 2 + 5 : size;
 		default:                  return size;
 		}
 	}
 
 	time_t time(unsigned who = -1u) const {
 		time_t time = 0;
-		size_t i = 2;
+		size_t i = 9;
 		switch (who) {
 		case action::place::type:
-			if (ep_moves.size()) time += ep_moves[0].time, i = 1;
+			if (ep_moves.size())
+				for (i = 0; i < 8; i++) time += ep_moves[i].time;
 			// no break;
 		case action::slide::type:
 			while (i < ep_moves.size()) time += ep_moves[i].time, i += 2;
@@ -78,10 +79,11 @@ public:
 
 	std::vector<action> actions(unsigned who = -1u) const {
 		std::vector<action> res;
-		size_t i = 2;
+		size_t i = 9;
 		switch (who) {
 		case action::place::type:
-			if (ep_moves.size()) res.push_back(ep_moves[0]), i = 1;
+			if (ep_moves.size())
+				for (i = 0; i < 8; i++) res.push_back(ep_moves[i]);
 			// no break;
 		case action::slide::type:
 			while (i < ep_moves.size()) res.push_back(ep_moves[i]), i += 2;

@@ -1,8 +1,8 @@
 /**
- * Framework for 2048 & 2048-Like Games (C++ 11)
+ * Framework for Threes! and its variants (C++ 11)
  * agent.h: Define the behavior of variants of agents including players and environments
  *
- * Author: Hung Guei
+ * Author: Theory of Computer Games
  *         Computer Games and Intelligence (CGI) Lab, NYCU, Taiwan
  *         https://cgilab.nctu.edu.tw/
  */
@@ -117,29 +117,41 @@ protected:
 };
 
 /**
- * default random environment
- * add a new random tile to an empty cell
- * 2-tile: 90%
- * 4-tile: 10%
+ * default random environment, i.e., placer
+ * place the hint tile and decide a new hint tile
  */
 class random_placer : public random_agent {
 public:
-	random_placer(const std::string& args = "") : random_agent("name=place role=placer " + args),
-		space({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }), popup(0, 9) {}
+	random_placer(const std::string& args = "") : random_agent("name=place role=placer " + args) {
+		spaces[0] = { 12, 13, 14, 15 };
+		spaces[1] = { 0, 4, 8, 12 };
+		spaces[2] = { 0, 1, 2, 3};
+		spaces[3] = { 3, 7, 11, 15 };
+		spaces[4] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+	}
 
 	virtual action take_action(const board& after) {
+		std::vector<int> space = spaces[after.last()];
 		std::shuffle(space.begin(), space.end(), engine);
 		for (int pos : space) {
 			if (after(pos) != 0) continue;
-			board::cell tile = popup(engine) ? 1 : 2;
-			return action::place(pos, tile);
+
+			int bag[3], num = 0;
+			for (board::cell t = 1; t <= 3; t++)
+				for (size_t i = 0; i < after.bag(t); i++)
+					bag[num++] = t;
+			std::shuffle(bag, bag + num, engine);
+
+			board::cell tile = after.hint() ?: bag[--num];
+			board::cell hint = bag[--num];
+
+			return action::place(pos, tile, hint);
 		}
 		return action();
 	}
 
 private:
-	std::array<int, 16> space;
-	std::uniform_int_distribution<int> popup;
+	std::vector<int> spaces[5];
 };
 
 /**
